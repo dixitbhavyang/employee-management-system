@@ -1,0 +1,12 @@
+E:\Projects\employee-management-system\backend\EmployeeManagement\EmployeeManagement.Domain\bin\Debug\net10.0\EmployeeManagement.Domain.deps.json
+E:\Projects\employee-management-system\backend\EmployeeManagement\EmployeeManagement.Domain\bin\Debug\net10.0\EmployeeManagement.Domain.dll
+E:\Projects\employee-management-system\backend\EmployeeManagement\EmployeeManagement.Domain\bin\Debug\net10.0\EmployeeManagement.Domain.pdb
+E:\Projects\employee-management-system\backend\EmployeeManagement\EmployeeManagement.Domain\obj\Debug\net10.0\EmployeeManagement.Domain.GeneratedMSBuildEditorConfig.editorconfig
+E:\Projects\employee-management-system\backend\EmployeeManagement\EmployeeManagement.Domain\obj\Debug\net10.0\EmployeeManagement.Domain.AssemblyInfoInputs.cache
+E:\Projects\employee-management-system\backend\EmployeeManagement\EmployeeManagement.Domain\obj\Debug\net10.0\EmployeeManagement.Domain.AssemblyInfo.cs
+E:\Projects\employee-management-system\backend\EmployeeManagement\EmployeeManagement.Domain\obj\Debug\net10.0\EmployeeManagement.Domain.csproj.CoreCompileInputs.cache
+E:\Projects\employee-management-system\backend\EmployeeManagement\EmployeeManagement.Domain\obj\Debug\net10.0\EmployeeManagement.Domain.sourcelink.json
+E:\Projects\employee-management-system\backend\EmployeeManagement\EmployeeManagement.Domain\obj\Debug\net10.0\EmployeeManagement.Domain.dll
+E:\Projects\employee-management-system\backend\EmployeeManagement\EmployeeManagement.Domain\obj\Debug\net10.0\refint\EmployeeManagement.Domain.dll
+E:\Projects\employee-management-system\backend\EmployeeManagement\EmployeeManagement.Domain\obj\Debug\net10.0\EmployeeManagement.Domain.pdb
+E:\Projects\employee-management-system\backend\EmployeeManagement\EmployeeManagement.Domain\obj\Debug\net10.0\ref\EmployeeManagement.Domain.dll

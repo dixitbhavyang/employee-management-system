@@ -186,3 +186,6 @@ secrets/
 !.gitkeep
 !README.md
 !LICENSE
+/backend/EmployeeManagement/EmployeeManagement/obj
+/backend/EmployeeManagement/EmployeeManagement/bin
+/backend/EmployeeManagement/EmployeeManagement.Domain/obj

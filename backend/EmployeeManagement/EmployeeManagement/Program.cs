@@ -16,6 +16,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 // Add Application services (Business logic)
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 
 // Add API Documentation (Swagger)
 builder.Services.AddEndpointsApiExplorer();

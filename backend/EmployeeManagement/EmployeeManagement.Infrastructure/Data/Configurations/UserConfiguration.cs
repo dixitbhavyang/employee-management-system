@@ -1,4 +1,5 @@
 ﻿using EmployeeManagement.Domain.Entities;
+using EmployeeManagement.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -40,7 +41,7 @@ namespace EmployeeManagement.Infrastructure.Data.Configurations
             builder.Property(u => u.Role)
                 .IsRequired()
                 .HasMaxLength(20)
-                .HasDefaultValue("User");
+                .HasDefaultValue(UserRole.User);
 
             builder.Property(u => u.CreatedDate)
                 .IsRequired()

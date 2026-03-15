@@ -69,7 +69,7 @@ namespace EmployeeManagement.Infrastructure.Data.Configurations
 
             // Relationships
             builder.HasOne(e => e.Department)
-                .WithMany()
+                .WithMany(d => d.Employees)
                 .HasForeignKey(e => e.DepartmentId)
                 .OnDelete(DeleteBehavior.Restrict); // Prevent deleting department with employees
         }

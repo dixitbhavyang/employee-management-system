@@ -58,12 +58,14 @@ namespace EmployeeManagement.Application.Services
         /// <summary>
         /// Get a single employee by ID
         /// </summary>
-        public async Task<EmployeeDTO?> GetEmployeeByIdAsync(int employeeId)
+        public async Task<EmployeeDTO> GetEmployeeByIdAsync(int employeeId)
         {
             var employee = await _employeeRepository.GetByIdAsync(employeeId);
 
             if (employee == null)
-                return null;
+            {
+                throw new NotFoundException("Employee", employeeId);
+            }
 
             return MapToDTO(employee);
         }

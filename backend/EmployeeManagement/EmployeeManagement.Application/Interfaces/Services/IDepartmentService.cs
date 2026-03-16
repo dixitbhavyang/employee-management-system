@@ -10,7 +10,7 @@ namespace EmployeeManagement.Application.Interfaces.Services
     public interface IDepartmentService
     {
         Task<List<DepartmentDTO>> GetAllDepartmentsAsync();
-        Task<DepartmentDTO?> GetDepartmentByIdAsync(int departmentId);
+        Task<DepartmentDTO> GetDepartmentByIdAsync(int departmentId);
         Task<DepartmentDTO> CreateDepartmentAsync(CreateDepartmentRequest request);
         Task<DepartmentDTO> UpdateDepartmentAsync(UpdateDepartmentRequest request);
         Task<bool> DeleteDepartmentAsync(int departmentId);

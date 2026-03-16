@@ -47,12 +47,6 @@ namespace EmployeeManagement.Api.Controllers
 
             var department = await _departmentService.GetDepartmentByIdAsync(id);
 
-            if (department == null)
-            {
-                _logger.LogWarning("Department with ID {DepartmentId} not found", id);
-                return NotFound(new { message = $"Department with ID {id} not found" });
-            }
-
             return Ok(department);
         }
 

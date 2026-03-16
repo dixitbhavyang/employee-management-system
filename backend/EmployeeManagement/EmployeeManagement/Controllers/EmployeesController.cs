@@ -57,12 +57,6 @@ namespace EmployeeManagement.Api.Controllers
 
             var employee = await _employeeService.GetEmployeeByIdAsync(id);
 
-            if (employee == null)
-            {
-                _logger.LogWarning("Employee with ID {EmployeeId} not found", id);
-                return NotFound(new { message = $"Employee with ID {id} not found" });
-            }
-
             return Ok(employee);
         }
 

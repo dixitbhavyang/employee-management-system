@@ -21,9 +21,10 @@ namespace EmployeeManagement.Application.Interfaces.Services
             int? departmentId = null);
 
         /// <summary>
-        /// Get a single employee by ID
+        /// Get employee by ID
+        /// Throws NotFoundException if not found
         /// </summary>
-        Task<EmployeeDTO?> GetEmployeeByIdAsync(int employeeId);
+        Task<EmployeeDTO> GetEmployeeByIdAsync(int employeeId);
 
         /// <summary>
         /// Create a new employee

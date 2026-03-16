@@ -27,12 +27,14 @@ namespace EmployeeManagement.Application.Services
             return departments.Select(d => MapToDTO(d)).ToList();
         }
 
-        public async Task<DepartmentDTO?> GetDepartmentByIdAsync(int departmentId)
+        public async Task<DepartmentDTO> GetDepartmentByIdAsync(int departmentId)
         {
             var department = await _departmentRepository.GetByIdAsync(departmentId);
 
             if (department == null)
-                return null;
+            {
+                throw new NotFoundException("Department", departmentId); ;
+            }
 
             return MapToDTO(department);
         }

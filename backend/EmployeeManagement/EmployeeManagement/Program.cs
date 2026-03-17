@@ -2,12 +2,16 @@ using EmployeeManagement.Api.Middleware;
 using EmployeeManagement.Application.Interfaces.Services;
 using EmployeeManagement.Application.Services;
 using EmployeeManagement.Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
 using Serilog;
+using System.Text;
 
-// ========== CONFIGURE SERILOG FIRST (BEFORE BUILDING) ==========
+// ========== CONFIGURE SERILOG FIRST ==========
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Information()  // Log Info and above (Info, Warning, Error)
-    .MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)  // Reduce ASP.NET noise
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
     .Enrich.FromLogContext()
     .Enrich.WithThreadId()
     .Enrich.WithMachineName()
@@ -28,93 +32,116 @@ try
     // ========== USE SERILOG ==========
     builder.Host.UseSerilog();
 
-    // ========================================
-    // 1. ADD SERVICES TO CONTAINER
-    // ========================================
+    // ========== JWT SETTINGS ==========
+    var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+    var secret = jwtSettings["Secret"] ?? throw new InvalidOperationException("JWT Secret not configured");
 
-    // Add Controllers
-    builder.Services.AddControllers();
-
-    // Add Infrastructure services (DbContext, Repositories)
-    builder.Services.AddInfrastructure(builder.Configuration);
-
-    // Add Application services (Business logic)
-    builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-    builder.Services.AddScoped<IDepartmentService, DepartmentService>();
-
-    // Add API Documentation (Swagger)
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen(options =>
+    // ========== AUTHENTICATION ==========
+    builder.Services.AddAuthentication(options =>
     {
-        options.SwaggerDoc("v1", new()
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
         {
-            Title = "Employee Management API",
-            Version = "v1",
-            Description = "API for managing employees and departments",
-            Contact = new()
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidAudience = jwtSettings["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+            ClockSkew = TimeSpan.Zero
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
             {
-                Name = "Bhavyang Dixit",
-                Email = "your.email@example.com"
+                Log.Warning("Authentication failed: {Error}", context.Exception.Message);
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                var username = context.Principal?.Identity?.Name;
+                Log.Information("Token validated for user: {Username}", username);
+                return Task.CompletedTask;
             }
-        });
+        };
     });
 
-    // Add CORS for Angular frontend
+    builder.Services.AddAuthorization();
+
+    // ========== SERVICES ==========
+    builder.Services.AddControllers();
+
+    // Infrastructure services (DbContext, Repositories)
+    builder.Services.AddInfrastructure(builder.Configuration);
+
+    // Application services (Business logic)
+    builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+    builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+    builder.Services.AddScoped<IAuthService, AuthService>();
+
+    // API Documentation
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddOpenApi();
+
+    // CORS - Allow Angular frontend
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("AllowAngular", policy =>
         {
-            policy.WithOrigins("http://localhost:4200")  // Angular default port
-                  .AllowAnyMethod()
+            policy.WithOrigins("http://localhost:4200")
                   .AllowAnyHeader()
-                  .AllowCredentials();
+                  .AllowAnyMethod();
         });
     });
 
-    // ========================================
-    // 2. BUILD THE APP
-    // ========================================
-
+    // ========== BUILD APP ==========
     var app = builder.Build();
 
+    // ========== MIDDLEWARE PIPELINE (ORDER MATTERS!) ==========
+
+    // 1. Request Logging
     app.UseSerilogRequestLogging();
 
+    // 2. Exception Handling
     app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-    // ========================================
-    // 3. CONFIGURE HTTP REQUEST PIPELINE
-    // ========================================
-
-    // Development-only middleware
+    // 3. API Documentation (Development only)
     if (app.Environment.IsDevelopment())
     {
-        app.UseSwagger();
-        app.UseSwaggerUI(options =>
+        app.MapOpenApi();
+        app.MapScalarApiReference(options =>
         {
-            options.SwaggerEndpoint("/swagger/v1/swagger.json", "Employee Management API v1");
-            options.RoutePrefix = string.Empty;  // Swagger at root (http://localhost:5000)
+            options
+                .WithTitle("Employee Management API")
+                .WithTheme(ScalarTheme.DeepSpace)
+                .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
         });
     }
 
-    // HTTPS Redirection
+    // 4. HTTPS Redirection
     app.UseHttpsRedirection();
 
-    // CORS
+    // 5. CORS
     app.UseCors("AllowAngular");
 
+    // 6. Authentication (WHO you are)
+    app.UseAuthentication();
+
+    // 7. Authorization (WHAT you can do)
     app.UseAuthorization();
 
-    // Map Controllers
+    // 8. Controllers
     app.MapControllers();
 
     Log.Information("Employee Management API started successfully");
 
-    // ========================================
-    // 4. RUN THE APP
-    // ========================================
-
     app.Run();
-
 }
 catch (Exception ex)
 {

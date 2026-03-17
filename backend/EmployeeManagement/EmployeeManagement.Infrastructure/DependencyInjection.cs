@@ -31,6 +31,7 @@ namespace EmployeeManagement.Infrastructure
             // Register Repositories
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             return services;
         }
